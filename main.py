@@ -6,6 +6,7 @@ import os
 import shutil
 from datetime import date
 from typing import Optional # Imported Optional for type hinting if needed
+from pathlib import Path
 
 # Import Agent Module
 from agent_core import file_to_base64, analyze_audio_to_text, analyze_image_for_context, generate_student_report
@@ -17,8 +18,13 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app = FastAPI()
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+static_dir = Path("static")
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+upload_dir = Path("uploads")
+if upload_dir.exists():
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Set up template engine
 templates = Jinja2Templates(directory="templates")
