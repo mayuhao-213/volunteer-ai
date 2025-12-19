@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center py-20">
+    <h1 class="text-5xl font-bold text-gray-900 mb-6">Empowering Volunteers with AI: <br>Understand Every Student's Voice</h1>
+    
+    <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+        Move beyond guesswork and let data speak.
+        <br>
+        Upload students' <strong>artwork, photos, recordings</strong>, and your <strong>observations</strong>.
+        Our Multimodal AI Agent will help you uncover their potential and generate exclusive <strong>Psychological & Growth Reports</strong>.
+    </p>
+    
+    <a href="/upload" class="bg-blue-600 text-white text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1 flex items-center justify-center w-max mx-auto">
+        <span class="mr-2">🚀</span> Create Student Profile
+    </a>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
+        <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition">
+            <div class="text-4xl mb-4">🎨</div>
+            <h3 class="text-xl font-bold mb-2">Visual Potential Insight</h3>
+            <p class="text-gray-500">
+                Identify creativity and personality traits through student artwork and expressions.
+            </p>
+        </div>
+        <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition">
+            <div class="text-4xl mb-4">🎧</div>
+            <h3 class="text-xl font-bold mb-2">Listen to Inner Worlds</h3>
+            <p class="text-gray-500">
+                Analyze daily conversations and recordings to capture the emotional needs behind their words.
+            </p>
+        </div>
+        <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition">
+            <div class="text-4xl mb-4">📈</div>
+            <h3 class="text-xl font-bold mb-2">Scientific Guidance</h3>
+            <p class="text-gray-500">
+                Generate comprehensive growth reports with career enlightenment and learning advice based on multimodal data.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

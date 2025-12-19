@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
+    <h2 class="text-2xl font-bold mb-6 border-b pb-4">Create AI Growth Profile</h2>
+
+    <form action="/analyze" method="post" enctype="multipart/form-data" class="space-y-6" onsubmit="showLoading()">
+        <div class="flex justify-center mb-6">
+            <div class="relative group">
+                <label for="avatar-input" class="cursor-pointer">
+                    <div id="avatar-placeholder"
+                        class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-4 border-white shadow-lg group-hover:bg-gray-300 transition">
+                        <span class="text-3xl">📷</span>
+                    </div>
+                    <img id="avatar-preview" src="#"
+                        class="hidden w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
+
+                    <div class="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-1 shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                    </div>
+                </label>
+                <input type="file" name="avatar" id="avatar-input" accept="image/*" class="hidden" />
+            </div>
+            <p class="text-xs text-gray-500 absolute mt-24 pt-2">Upload Avatar</p>
+        </div>
+        <div>
+            <label class="block text-gray-700 font-bold mb-2">Student Name</label>
+            <input type="text" name="name" required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g., Alice">
+        </div>
+
+        <div>
+            <label class="block text-gray-700 font-bold mb-2">Description / Observation Notes</label>
+            <textarea name="description" rows="4" required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Briefly describe the student's performance in class, interests, or any learning difficulties..."></textarea>
+        </div>
+
+        <div>
+            <label class="block text-gray-700 font-bold mb-2">Upload Photo or Artwork</label>
+            <div id="image-drop-area" class="flex items-center justify-center w-full relative">
+                <label for="photo-input"
+                    class="flex flex-col w-full h-32 border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300 group cursor-pointer rounded-xl">
+                    <div id="image-placeholder" class="flex flex-col items-center justify-center pt-7 h-full">
+                        <img id="image-preview" src="#" alt="Image Preview"
+                            class="hidden absolute inset-0 w-full h-full object-cover rounded-xl" />
+                        <p id="image-text" class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                            Click to Select or Drag & Drop</p>
+                    </div>
+                    <input type="file" name="photo" id="photo-input" accept="image/*"
+                        class="opacity-0 absolute inset-0 cursor-pointer" required />
+                </label>
+            </div>
+            <p id="photo-filename" class="mt-2 text-sm text-gray-500 hidden"></p>
+        </div>
+
+        <div>
+            <label class="block text-gray-700 font-bold mb-2">Upload Recording (Self-intro or Dialogue)</label>
+            <input type="file" name="audio" id="audio-input" accept="audio/*"
+                class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                required />
+            <p id="audio-filename" class="mt-2 text-sm text-gray-500 hidden"></p>
+        </div>
+
+        <button type="submit"
+            class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+            Start AI Analysis
+        </button>
+    </form>
+
+    <div id="loadingOverlay"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+            <p class="text-lg font-semibold text-gray-700">Agent is analyzing multimodal data...</p>
+            <p class="text-sm text-gray-500">Parsing images, audio, and text features</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showLoading() {
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+    }
+
+    // --- JS Logic (Translated logs but logic is same) ---
+
+    // 1. Photo Preview
+    const photoInput = document.getElementById('photo-input');
+    const imagePreview = document.getElementById('image-preview');
+    const imageText = document.getElementById('image-text');
+    const photoFilename = document.getElementById('photo-filename');
+
+    photoInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            photoFilename.textContent = `Selected: ${file.name}`;
+            photoFilename.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+                imageText.classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 2. Audio Filename
+    const audioInput = document.getElementById('audio-input');
+    const audioFilename = document.getElementById('audio-filename');
+
+    audioInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            audioFilename.textContent = `Selected: ${file.name}`;
+            audioFilename.classList.remove('hidden');
+        } else {
+            audioFilename.classList.add('hidden');
+        }
+    });
+
+    // 3. Avatar Upload
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const avatarPlaceholder = document.getElementById('avatar-placeholder');
+
+    avatarInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                avatarPreview.src = e.target.result;
+                avatarPreview.classList.remove('hidden');
+                avatarPlaceholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

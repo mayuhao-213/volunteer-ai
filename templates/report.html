@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white p-8 rounded-xl shadow-md mb-8">
+        <div class="flex items-center space-x-6">
+            <div class="h-24 w-24 flex-shrink-0">
+                {% if report.avatar_url %}
+                <img src="{{ report.avatar_url }}" alt="Avatar"
+                    class="w-full h-full rounded-full object-cover border-4 border-blue-100 shadow-sm">
+                {% else %}
+                <div class="w-full h-full bg-blue-100 rounded-full flex items-center justify-center text-4xl shadow-sm">
+                    🎓
+                </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Growth Analysis Report: {{ report.user_name }}</h1>
+                <p class="text-green-600 font-semibold mt-2">✨ Analysis Complete | Generated at: {{ current_date }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4 border-t pt-4">
+            <div id="summary-intro" class="text-lg text-gray-700 italic markdown-content">
+                {{ report.summary_intro }}
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <div class="space-y-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">🧘</span> Potential Profile
+                </h3>
+                <div id="personality-content" class="text-gray-700 leading-relaxed text-justify markdown-content">
+                    {{ report.personality }}
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">🚀</span> Learning & Growth Advice
+                </h3>
+                <div id="advice-content" class="text-gray-700 leading-relaxed text-justify markdown-content">
+                    {{ report.learning_advice }}
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Core Competency Radar (AI Score)</h3>
+
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="radarChart"></canvas>
+                </div>
+
+                <div id="score-details" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="mr-2">🎨</span> Interest & Talent Analysis
+                </h3>
+                <div id="hobbies-content" class="text-gray-700 leading-relaxed markdown-content">
+                    {{ report.hobbies_analysis }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-lg mt-8 border-t-4 border-red-400">
+        <h3 class="text-xl font-bold mb-4 flex items-center text-red-700">
+            <span class="mr-2">🚨</span> Key Takeaways
+        </h3>
+        <div class="space-y-2 text-gray-700">
+            {% if report.key_takeaways is string %}
+            <div class="markdown-content">{{ report.key_takeaways }}</div>
+            {% else %}
+            <ul class="list-disc list-inside">
+                {% for item in report.key_takeaways %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-10 text-center">
+        <a href="/upload" class="text-blue-600 font-semibold hover:underline">← Analyze Another Student</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+    // 1. English Mapping Dictionary
+    const labelMap = {
+        'innovation': 'Innovation',
+        'communication': 'Communication',
+        'stability': 'Stability',
+        'drive': 'Inner Drive',
+        'empathy': 'Empathy'
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- A. Markdown Rendering ---
+        const mdElements = document.querySelectorAll('.markdown-content');
+        mdElements.forEach(el => {
+            const rawText = el.innerText;
+            el.innerHTML = marked.parse(rawText);
+        });
+
+        // --- B. Chart Rendering ---
+        const scores = {{ report.scores | tojson }};
+
+        if (typeof scores === 'object' && Object.keys(scores).length > 0) {
+            // Map keys to English labels
+            const labels = Object.keys(scores).map(key => labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1));
+            const dataValues = Object.values(scores);
+
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Score',
+                        data: dataValues,
+                        backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(37, 99, 235, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                display: false
+                            },
+                            grid: {
+                                circular: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            angleLines: { display: false },
+                            pointLabels: {
+                                font: { size: 14 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `${context.dataset.label}: ${context.parsed.r}`
+                            }
+                        }
+                    }
+                }
+            });
+
+            // B2. Render Score List (English)
+            const scoreDetailsContainer = document.getElementById('score-details');
+            Object.entries(scores).forEach(([key, value]) => {
+                const englishLabel = labelMap[key] || key;
+                const div = document.createElement('div');
+                div.className = 'flex justify-between text-sm text-gray-600';
+                div.innerHTML = `<span>${englishLabel}</span><span class="font-bold">${value}</span>`;
+                scoreDetailsContainer.appendChild(div);
+            });
+        }
+    });
+</script>
+{% endblock %}

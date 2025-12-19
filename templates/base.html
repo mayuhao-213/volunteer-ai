@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer AI - Growth Assistant System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <nav class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold flex items-center">
+                <span>🌱 Volunteer AI</span>
+            </a>
+            <div>
+                <a href="/" class="hover:text-blue-200 mr-4">Home</a>
+                <a href="/upload" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-blue-50 transition">Start Analysis</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-6 text-center">
+        <p>&copy; 2025 Volunteer AI Project. Powered by LLM Agent. Author: M.A.</p>
+    </footer>
+
+</body>
+</html>
